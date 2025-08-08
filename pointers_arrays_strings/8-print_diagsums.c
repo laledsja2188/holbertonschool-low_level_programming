@@ -13,8 +13,8 @@ void print_diagsums(int *a, int size)
 
 	for (i = 0; i < size; i++)
 	{
-		sum1 += a[i * size + i];         // əsas diaqonal
-		sum2 += a[i * size + (size - 1 - i)]; // ikinci diaqonal
+		sum1 += a[i * size + i];         /* əsas diaqonal */
+		sum2 += a[i * size + (size - 1 - i)]; /* ikinci diaqonal */
 	}
 
 	printf("%d, %d\n", sum1, sum2);
