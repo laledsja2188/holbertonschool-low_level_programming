@@ -11,9 +11,9 @@
  * does nothing.
  */
 
-void print_name(char *name, void (*F)(char *))
+void print_name(char *name, void (*f)(char *))
 {
-	if ((name == NULL) || 9f == NULL))
+	if ((name == NULL) || (f == NULL))
 	{
 		return;
 	}
