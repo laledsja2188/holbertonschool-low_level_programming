@@ -1,8 +1,7 @@
 #include "main.h"
 
 /**
- * /**
- * _strncat - string birlesdirir 
+ * _strncat - string birlesdirir el cek betty dahaaa yormaa nolarrki
  * @dest: Destination string
  * @src: Source string
  * @n: nnnnnn
@@ -26,7 +25,7 @@ char *_strncat(char *dest, char *src, int n)
 		j++;
 	}
 
-	dest[i] = '/0';
+	dest[i] = '\0';
 
 	return (dest);
 }
