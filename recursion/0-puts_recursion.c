@@ -1,16 +1,19 @@
 #include "main.h"
 
 /**
- * _puts_recursion - Rekursiya ilə string çap edir, sonda newline qoyur
- * @s: Çap olunacaq string
+ * _puts_recursion - Prints a string followed by a new line
+ * @s: The string to be printed
+ *
+ * Description: Uses recursion to print each character of the string
  */
+
 void _puts_recursion(char *s)
 {
-    if (*s == '\0')  /* Əgər stringin sonuna çatmışıqsa */
-    {
-        _putchar('\n');  /* Yeni sətir çap et */
-        return;          /* Rekursiyanı bitir */
-    }
-    _putchar(*s);        /* Hazırkı simvolu çap et */
-    _puts_recursion(s + 1); /* Növbəti simvola keç */
+	if (*s == '\0')
+	{
+		_putchar('\n');
+		return;
+	}
+	_putchar(*s);
+	_puts_recursion(s + 1);
 }
