@@ -18,7 +18,17 @@ typedef struct list_s
 	struct list_s *next;
 } list_t;
 
-size_t print_list(const list_t *h);  /* Function declaration */
+/**
+ * print_list - Prints all the elements of a list_t list
+ * @h: Pointer to the first node of the list
+ *
+ * Description: This function traverses the list, printing the string
+ * in each node. If the string is NULL, it prints [0] (nil) instead.
+ * It also prints the length of the string before printing the string.
+ *
+ * Return: The number of nodes in the list.
+ */
+size_t print_list(const list_t *h);
 
 #endif /* LISTS_H */
 
