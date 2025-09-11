@@ -56,5 +56,13 @@ list_t *add_node(list_t **head, const char *str);
  */
 list_t *add_node_end(list_t **head, const char *str);
 
+/**
+ * free_list - Frees a list_t list
+ * @head: Pointer to the head of the list
+ *
+ * Return: Nothing
+ */
+void free_list(list_t *head);
+
 #endif /* LISTS_H */
 
