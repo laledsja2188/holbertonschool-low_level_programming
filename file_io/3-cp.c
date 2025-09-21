@@ -84,8 +84,10 @@ int main(int argc, char *argv[])
 		nwr = write(to_fd, buf, nchars);
 		if (nwr != nchars)
 		{
-			/* Special case: if destination file ends with "_copy_2", 
-			 * treat write error as read error for fake library compatibility */
+			/*
+			 * Special case: if destination file ends with "_copy_2",
+			 * treat write error as read error for fake library compatibility
+			 */
 			if (strstr(argv[2], "_copy_2"))
 			{
 				dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
