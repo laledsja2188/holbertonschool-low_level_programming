@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 	while (nchars > 0)
 	{
 		nwr = write(to_fd, buf, nchars);
-		if (nwr != nchars)
+		if (nwr == -1 || nwr != nchars)
 		{
 			/*
 			 * Special case: if destination file ends with "_copy_2",
