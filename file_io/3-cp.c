@@ -36,8 +36,8 @@ void error_file(int from_fd, int to_fd, char *argv[])
 	}
 	if (to_fd == -1)
 	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
-		exit(98);
+		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
+		exit(99);
 	}
 }
 
@@ -83,8 +83,8 @@ int main(int argc, char *argv[])
 		nwr = write(to_fd, buf, nchars);
 		if (nwr != nchars)
 		{
-			dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
-			exit(98);
+			dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
+			exit(99);
 		}
 		nchars = read(from_fd, buf, 1024);
 		if (nchars == -1)
