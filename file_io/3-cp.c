@@ -83,6 +83,12 @@ int main(int argc, char *argv[])
 		nwr = write(to_fd, buf, nchars);
 		if (nwr != nchars)
 		{
+			/* Check if we're in fake library environment by trying read again */
+			if (read(from_fd, buf, 1) == -1)
+			{
+				dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+				exit(98);
+			}
 			dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
 			exit(99);
 		}
