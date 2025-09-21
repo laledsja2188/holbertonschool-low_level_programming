@@ -75,9 +75,12 @@ int main(int argc, char *argv[])
 		nchars = read(from_fd, buf, 1024);
 		if (nchars == -1)
 			error_file(-1, 0, argv);
-		nwr = write(to_fd, buf, nchars);
-		if (nwr == -1)
-			error_file(0, -1, argv);
+		if (nchars > 0)
+		{
+			nwr = write(to_fd, buf, nchars);
+			if (nwr == -1)
+				error_file(0, -1, argv);
+		}
 	}
 
 	err_close = close(from_fd);
