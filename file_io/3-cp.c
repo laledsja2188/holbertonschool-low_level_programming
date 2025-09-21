@@ -1,10 +1,31 @@
 #include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
+char *create_buffer(char *file);
 void close_file(int fd);
-void error_file(int from_fd, int to_fd, char *argv[]);
+
+/**
+ * create_buffer - Allocates 1024 bytes for a buffer.
+ * @file: The name of the file buffer is storing chars for.
+ *
+ * Return: A pointer to the newly-allocated buffer.
+ */
+char *create_buffer(char *file)
+{
+	char *buffer;
+
+	buffer = malloc(sizeof(char) * 1024);
+
+	if (buffer == NULL)
+	{
+		dprintf(STDERR_FILENO,
+			"Error: Can't write to %s\n", file);
+		exit(99);
+	}
+
+	return (buffer);
+}
 
 /**
  * close_file - Closes file descriptors.
@@ -15,30 +36,11 @@ void close_file(int fd)
 	int c;
 
 	c = close(fd);
+
 	if (c == -1)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
 		exit(100);
-	}
-}
-
-/**
- * error_file - Checks if files can be opened.
- * @from_fd: File descriptor of the file to copy from.
- * @to_fd: File descriptor of the file to copy to.
- * @argv: Arguments vector.
- */
-void error_file(int from_fd, int to_fd, char *argv[])
-{
-	if (from_fd == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
-		exit(98);
-	}
-	if (to_fd == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
-		exit(99);
 	}
 }
 
@@ -50,73 +52,52 @@ void error_file(int from_fd, int to_fd, char *argv[])
  * Return: 0 on success.
  *
  * Description: If the argument count is incorrect - exit code 97.
- * If file_from does not exist or cannot be read - exit code 98.
- * If file_to cannot be created or written to - exit code 99.
- * If file_to or file_from cannot be closed - exit code 100.
+ *              If file_from does not exist or cannot be read - exit code 98.
+ *              If file_to cannot be created or written to - exit code 99.
+ *              If file_to or file_from cannot be closed - exit code 100.
  */
 int main(int argc, char *argv[])
 {
-	int from_fd, to_fd, err_close;
-	ssize_t nchars, nwr;
-	char buf[1024];
+	int from, to, r, w;
+	char *buffer;
 
 	if (argc != 3)
 	{
-		dprintf(STDERR_FILENO, "%s", "Usage: cp file_from file_to\n");
+		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
 		exit(97);
 	}
 
-	from_fd = open(argv[1], O_RDONLY);
-	to_fd = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
-	error_file(from_fd, to_fd, argv);
+	buffer = create_buffer(argv[2]);
+	from = open(argv[1], O_RDONLY);
+	r = read(from, buffer, 1024);
+	to = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
 
-	/* First read attempt - check if fake library affects this */
-	nchars = read(from_fd, buf, 1024);
-	if (nchars == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
-		exit(98);
-	}
-
-	/* Continue reading and writing if first read succeeded */
-	while (nchars > 0)
-	{
-		nwr = write(to_fd, buf, nchars);
-		if (nwr == -1 || nwr != nchars)
+	do {
+		if (from == -1 || r == -1)
 		{
-			/*
-			 * Special case: if destination file ends with "_copy_2",
-			 * treat write error as read error for fake library compatibility
-			 */
-			if (strstr(argv[2], "_copy_2"))
-			{
-				dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
-				exit(98);
-			}
-			dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
-			exit(99);
-		}
-		nchars = read(from_fd, buf, 1024);
-		if (nchars == -1)
-		{
-			dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+			dprintf(STDERR_FILENO,
+				"Error: Can't read from file %s\n", argv[1]);
+			free(buffer);
 			exit(98);
 		}
-	}
 
-	err_close = close(from_fd);
-	if (err_close == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", from_fd);
-		exit(100);
-	}
+		w = write(to, buffer, r);
+		if (to == -1 || w == -1)
+		{
+			dprintf(STDERR_FILENO,
+				"Error: Can't write to %s\n", argv[2]);
+			free(buffer);
+			exit(99);
+		}
 
-	err_close = close(to_fd);
-	if (err_close == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", to_fd);
-		exit(100);
-	}
+		r = read(from, buffer, 1024);
+		to = open(argv[2], O_WRONLY | O_APPEND);
+
+	} while (r > 0);
+
+	free(buffer);
+	close_file(from);
+	close_file(to);
 
 	return (0);
 }
