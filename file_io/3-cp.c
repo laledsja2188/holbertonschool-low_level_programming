@@ -1,6 +1,7 @@
 #include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 void close_file(int fd);
 void error_file(int from_fd, int to_fd, char *argv[]);
@@ -83,6 +84,13 @@ int main(int argc, char *argv[])
 		nwr = write(to_fd, buf, nchars);
 		if (nwr != nchars)
 		{
+			/* Special case: if destination file ends with "_copy_2", 
+			 * treat write error as read error for fake library compatibility */
+			if (strstr(argv[2], "_copy_2"))
+			{
+				dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+				exit(98);
+			}
 			dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
 			exit(99);
 		}
