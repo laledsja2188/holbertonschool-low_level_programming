@@ -69,8 +69,7 @@ int main(int argc, char *argv[])
 	to_fd = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
 	error_file(from_fd, to_fd, argv);
 
-	nchars = 1024;
-	while (nchars == 1024)
+	while (1)
 	{
 		nchars = read(from_fd, buf, 1024);
 		if (nchars == -1)
@@ -78,14 +77,13 @@ int main(int argc, char *argv[])
 			dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
 			exit(98);
 		}
-		if (nchars > 0)
+		if (nchars == 0)
+			break;
+		nwr = write(to_fd, buf, nchars);
+		if (nwr == -1)
 		{
-			nwr = write(to_fd, buf, nchars);
-			if (nwr == -1)
-			{
-				dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
-				exit(99);
-			}
+			dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
+			exit(99);
 		}
 	}
 
