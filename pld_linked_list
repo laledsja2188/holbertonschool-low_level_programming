@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* New file: pld_linked_list */
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node* struct_node(int data)
+{
+    Node *n_node = (Node *)malloc(sizeof(Node));
+    n_node->data = data;
+    n_node->next = NULL;
+    return n_node;
+    
+}
+void n_reverse(Node* head)
+{
+    if (head == NULL)
+        return;
+    
+    n_reverse(head->next);
+    printf("%d ", head->data);
+}
+int main(void)
+{
+    Node *head = struct_node(1);
+    head->next = struct_node(2);
+    head->next->next = struct_node(3);
+    head->next->next->next = struct_node(4);
+    head->next->next->next->next = struct_node(5);
+    n_reverse(head);
+    return 0;   
+}
